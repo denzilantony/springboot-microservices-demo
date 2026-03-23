@@ -1,15 +1,15 @@
 # Spring Boot Microservices Demo
 
+![CI](https://github.com/denzilantony/springboot-microservices-demo/actions/workflows/ci.yml/badge.svg)
 ![Java](https://img.shields.io/badge/Java_17-ED8B00?style=flat&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat&logo=springboot&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
-![CI](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat&logo=githubactions&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat)
 
-A production-inspired microservices system built with Java 17 and 
-Spring Boot, demonstrating real-world patterns used in high-scale 
-backend platforms.
+A production-inspired microservices system built with Java 17 and
+Spring Boot 3, demonstrating real-world backend engineering patterns
+used in high-scale enterprise platforms.
 
 ---
 
@@ -17,13 +17,12 @@ backend platforms.
 ```
 ┌─────────────────┐     REST      ┌─────────────────┐
 │  product-service│──────────────▶│  order-service  │
-│  (PostgreSQL)   │               │  (H2 / Postgres)│
+│  (PostgreSQL)   │               │  (in progress)  │
 └─────────────────┘               └────────┬────────┘
-                                           │ Spring
                                            │ Events
                                   ┌────────▼────────┐
                                   │notification-svc │
-                                  │  (logs/email)   │
+                                  │  (in progress)  │
                                   └─────────────────┘
 ```
 
@@ -31,25 +30,33 @@ backend platforms.
 
 ## Services
 
-| Service | Responsibility | Port |
-|---|---|---|
-| `product-service` | Manage product catalogue, stock levels | 8081 |
-| `order-service` | Place and track orders | 8082 |
-| `notification-service` | Handle order notifications async | 8083 |
+| Service | Status | Port | Description |
+|---|---|---|---|
+| `product-service` | ✅ Complete | 8081 | Product catalogue REST API |
+| `order-service` | 🔄 In progress | 8082 | Order management |
+| `notification-service` | 🔄 In progress | 8083 | Async notifications |
 
 ---
 
 ## Tech Stack
 
 - **Java 17** + **Spring Boot 3.x**
-- **Spring Security** with OAuth2 resource server
-- **PostgreSQL** (product-service) + **H2** (order-service, tests)
-- **Spring Events** for async inter-service communication
-- **OpenAPI / Swagger UI** on every service
-- **JUnit 5 + Mockito** — TDD approach throughout
-- **Testcontainers** — integration tests with real PostgreSQL
-- **Docker + Docker Compose** — run everything with one command
-- **GitHub Actions** — CI pipeline runs all tests on every push
+- **Spring Security** with OAuth2
+- **PostgreSQL** (production) + **H2** (tests)
+- **JUnit 5 + Mockito** — TDD approach, 13/13 tests passing
+- **Docker + Docker Compose** — one command startup
+- **GitHub Actions** — CI pipeline on every push
+
+---
+
+## Test Coverage
+```
+ProductServiceApplicationTests    ✅
+Product Service Tests             ✅  7/7
+Product Controller Tests          ✅  5/5
+─────────────────────────────────────────
+Total                             ✅ 13/13
+```
 
 ---
 
@@ -57,41 +64,50 @@ backend platforms.
 
 ### Prerequisites
 - Docker Desktop installed and running
-- Java 17+ installed
-- Maven 3.8+ installed
+- Java 17+
+- Maven 3.8+
 
-### Start all services
+### Start everything with one command
 ```bash
 docker-compose up --build
 ```
 
-### Access the APIs
-- Product Service: http://localhost:8081/swagger-ui.html
-- Order Service:   http://localhost:8082/swagger-ui.html
-- Notification:    http://localhost:8083/swagger-ui.html
+### Access the API
+```
+http://localhost:8081/api/v1/products
+http://localhost:8081/swagger-ui.html
+http://localhost:8081/actuator/health
+```
 
----
-
-## Running Tests
+### Run tests
 ```bash
-# All tests
 mvn test
-
-# With coverage report
-mvn verify
 ```
 
 ---
 
-## Key Design Decisions
+## API Endpoints
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed notes on 
-design decisions, trade-offs, and what I would do differently 
-at larger scale.
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/v1/products` | Get all products |
+| GET | `/api/v1/products/{id}` | Get product by ID |
+| POST | `/api/v1/products` | Create new product |
+| PUT | `/api/v1/products/{id}` | Update product |
+| DELETE | `/api/v1/products/{id}` | Delete product |
+| GET | `/api/v1/products/search?name=` | Search by name |
+| GET | `/api/v1/products/out-of-stock` | Get out of stock |
+
+---
+
+## Design Decisions
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed notes on
+design decisions, trade-offs, and production considerations.
 
 ---
 
 ## Author
 
-**Denzil Antony** — Senior Java Backend Engineer, Germany  
+**Denzil Antony** — Senior Java Backend Engineer, Germany
 [linkedin.com/in/denzilantony](https://linkedin.com/in/denzilantony)
